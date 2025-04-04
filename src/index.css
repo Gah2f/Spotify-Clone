@@ -1,3 +1,7 @@
 @import "tailwindcss";
 
 @custom-variant hover (&:hover);
+
+::-webkit-scrollbar {
+ display: none;
+}

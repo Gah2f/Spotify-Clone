@@ -1,16 +1,25 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Nav from "./Nav";
 import { useParams } from "react-router-dom";
-import { albumsData, assets, songsData } from "../assets/frontend-assets/assets";
+import {  assets } from "../assets/frontend-assets/assets";
 import { PlayerContext } from "../Context/PlayerContext";
 
-function DisplayAlbum() {
-  const { playWithID } = useContext(PlayerContext);
+function DisplayAlbum({album}) {
+  const { playWithID, albumData ,songData } = useContext(PlayerContext);
+  // console.log("Album Data", albumData);
   const { id } = useParams();
   // console.log("The id of this song is:", id);
-  const albumData = albumsData[id];
-  // console.log('Album Data:', albumData);
-  return (
+ const[albumsData, setAlbumsData] = useState('');
+  console.log('Album Data:', albumData);
+
+  useEffect(()=>{
+    albumData.map((item)=>{
+      if(item._id === id) {
+        setAlbumsData(item);
+      }
+    })
+  },[])
+  return albumsData ?  (
     <>
       <Nav />
       <div className="mt-10 flex gap-8 flex-col md:flex-row md:items-end">
@@ -31,7 +40,7 @@ function DisplayAlbum() {
               src={assets.spotify_logo}
               alt="Spotify Logo"
             />
-            <b >Spotify</b>• 1,345,565 likes • <b>50 Songs, </b>
+            <b> Spotify </b> • 1,345,565 likes •  <b>  50 Songs, </b>
             about 3 hr 45 min
           </p>
         </div>
@@ -49,9 +58,9 @@ function DisplayAlbum() {
       </div>
       <hr />
       {
-        songsData.map((song, index)=>(
+        songData?.filter((item)=>(item.album === album.name)).map((song, index)=>(
 
-            <div onClick={()=> playWithID(song.id)} key={index} className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer">
+            <div onClick={()=> playWithID(song._id)} key={index} className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer">
                 <p className="text-white">
                     <b className="mr-4 text-[#a7a7a7]">
                         {index + 1 }
@@ -72,7 +81,7 @@ function DisplayAlbum() {
         ))
       }
     </>
-  );
+  ) : null;
 }
 
 export default DisplayAlbum;
